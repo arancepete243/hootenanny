@@ -1494,6 +1494,8 @@ mgcp = {
       // ["t.amenity == 'marketplace'","t.facility = 'yes'"],
       ["t.amenity == 'ferry_terminal'","t['transport:type'] = 'maritime'"],
       ["t.amenity == 'prison' && t.barrier == 'wall'","delete t.barrier"],
+      ["t.tourism == 'attraction' && t.building == 'church'","delete t.tourism"],
+      ["t.tourism == 'attraction' && t.landuse == 'commercial'","delete t.tourism"],
       ["t.aeroway == 'navigationaid' && t.navigationaid","delete t.navigationaid"],
       ["t.barrier == 'tank_trap' && t.tank_trap == 'dragons_teeth'","t.barrier = 'dragons_teeth'; delete t.tank_trap"],
       ["t.barrier == 'fence' && t.area == 'yes' && !(t.landuse || t.military)","delete t.area"],
@@ -1920,6 +1922,8 @@ mgcp = {
 
     // Military buildings in MGCP TRD3 have a MFC tag that we need to account for
     if (tags.building && tags.military) attrs.F_CODE = 'AL015';
+
+    if (tags.building && (tags.embassy || tags.diplomatic == 'embassy')) attrs.FFN = '827';
 
     // Tree rows are a special case for EC030
     if (tags.natural == 'tree_row' && geometryType == 'Line')
