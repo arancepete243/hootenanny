@@ -1541,11 +1541,15 @@ mgcp = {
       ["t.tunnel == 'building_passage'","t.tunnel = 'yes'"],
       ["t.waterway == 'riverbank'","t.waterway = 'river'"],
       ["t.wetland && t.natural == 'wetland'","delete t.natural"],
+      ["t.wetland == 'wet_meadow'", "a.F_CODE = 'ED010'"],
       ["t.aeroway == 'hangar' && t.building == 'yes'", "t.building = 'hangar'"],
       ["t.landuse == 'religious'", "t.amenity = 'religious_activities'"],
       ["t.industrial == 'depot' && t.depot == 'bus'", "a.F_CODE = 'AL010'; a.FFN = '480'"],
       ["t.water == 'moat'", "a.F_CODE = 'BH030'"],
-      ["t.building == 'hotel'", "a.F_CODE = 'AL015'; a.FFN = '550'"]
+      ["t.building == 'hotel'", "a.F_CODE = 'AL015'; a.FFN = '550'"],
+      ["t.amenity == 'language_school' && t.barrier == 'wall'", "delete t.barrier"],
+      ["t.amenity == 'language_school'", "a.FFN = '850'"],
+      ["t.depot == 'bus' && t.landuse == 'brownfield'", "delete t.landuse; a.F_CODE = 'AL010'; a.FFN = '480'"]
       ];
 
       mgcp.mgcpPreRules = translate.buildComplexRules(rulesList);
@@ -1803,6 +1807,16 @@ mgcp = {
     }
   */
 
+    saltOrFreshwater = ['pond', 'lake', 'lagoon', 'river']
+    if (tags.natural == 'water' && saltOrFreshwater.includes(tags.water)) {
+      if (tags.salt == 'yes') {
+        attrs.SCC = '10'
+      }
+      else {
+        attrs.SCC = '11'
+      }
+    }
+
     // Moved these out of the complex rules to help with BH090 vs other things
     switch (tags.water)
     {
@@ -1820,8 +1834,16 @@ mgcp = {
         break;
 
       case 'pond':
-        attrs.F_CODE = 'BH170';
-        tags.natural = 'other_pool_type';
+        if (geometryType == 'Point') {
+          attrs.F_CODE = 'BH170'
+        }
+        else {
+          delete tags.water
+        }
+        break;
+
+      case 'lagoon':
+        delete tags.water
         break;
     } // End Water
 
