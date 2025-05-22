@@ -22,7 +22,6 @@
 
     <josm.artifactId>josm</josm.artifactId>
 		<josm.version>18193</josm.version>
-		<!-- <josm.version>19369</josm.version> -->
 
 	  <!-- josm.artifactId>me-josm</josm.artifactId -->
 		<!-- josm.version>10.2.2</josm.version -->
@@ -33,7 +32,6 @@
     <repository>
       <id>org.openstreetmap.josm</id>
       <url>https://josm.openstreetmap.de/nexus/content/repositories/releases/</url>
-      <!-- <url>https://josm.openstreetmap.de/nexus3/service/rest/repository/browse/releases/</url> -->
       <releases>
         <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
