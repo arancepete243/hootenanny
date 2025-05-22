@@ -33,7 +33,7 @@
     <repository>
       <id>org.openstreetmap.josm</id>
       <!-- <url>https://josm.openstreetmap.de/nexus/content/repositories/releases/</url> -->
-      <url>https://josm.openstreetmap.de/nexus3/service/rest/repository/browse/releases/org/openstreetmap/josm/josm/</url>
+      <url>https://josm.openstreetmap.de/nexus3/service/rest/repository/browse/releases/</url>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
