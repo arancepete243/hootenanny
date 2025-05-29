@@ -1861,8 +1861,10 @@ mgcp = {
       case 'village':
       case 'hamlet':
       case 'yes':  // We set this as a default when going to OSM
+        if (!tags.boundary) {
           attrs.F_CODE = 'AL020'; // Built Up Area
           delete tags.place;
+        }
           break;
 
       case 'isolated_dwelling':
@@ -2365,6 +2367,10 @@ mgcp = {
         if (attrs.FUC && ['0','4','8','19','999'].indexOf(attrs.FUC) < 0) attrs.FUC = '999';
         break;
 
+      case 'AL241': // 
+        if (tags.man_made == 'lighthouse') attrs.TTC = '5';
+        break;
+        
       case 'AN010': // Railway
         if (tags.bridge) attrs.LOC = '45'; // Above Surface
         if (tags.tunnel) attrs.LOC = '40'; // Below Surface
