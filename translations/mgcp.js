@@ -924,11 +924,25 @@ mgcp = {
     // Railway vs Road
     // if (attrs.F_CODE == 'AN010' && attrs.RRC =='0') tags.railway = 'yes';
 
+    // EC060 = man_made:clearcut
+    if (attrs.F_CODE == 'EC060')
+    {
+      tags.man_made = 'clearcut';
+      delete tags.natural;
+    }
+
     if (attrs.F_CODE == 'AL010' && attrs.FFN == '825')
     {
       tags.diplomatic = 'embassy';
       tags.office = 'diplomatic';
       delete tags.landuse;
+    }
+
+    if (attrs.F_CODE == 'AM030')
+    {
+      tags.building = 'silo';
+      tags.content = 'grain';
+      delete tags.man_made;
     }
 
     if (attrs.F_CODE == 'AP030' && attrs.WTC == '0')
@@ -1610,6 +1624,7 @@ mgcp = {
       // ["t.amenity == 'marketplace'","t.facility = 'yes'"],
       ["t.amenity == 'ferry_terminal'","t['transport:type'] = 'maritime'"],
       ["t.amenity == 'prison' && t.barrier == 'wall'","delete t.barrier"],
+      ["t.building == 'silo' && t.content == 'grain'","a.F_CODE = 'AM030'"],
       ["t.tourism == 'attraction' && t.building == 'church'","delete t.tourism"],
       ["t.tourism == 'attraction' && t.landuse == 'commercial'","delete t.tourism"],
       ["t.aeroway == 'navigationaid' && t.navigationaid","delete t.navigationaid"],
@@ -1620,6 +1635,7 @@ mgcp = {
       // ["t.construction && t.railway","t.railway = t.construction; t.condition = 'construction'; delete t.construction"],
       // ["t.construction && t.highway","t.highway = t.construction; t.condition = 'construction'; delete t.construction"],
       ["t.content && !(t.product)","t.product = t.content; delete t.content"],
+      ["t.landuse == 'aquaculture' && t.aquaculture == 'fish'","a.F_CODE = 'BH051'"],
       ["t.landuse == 'industrial' && t.industrial == 'mine'","a.F_CODE = 'AA010'"],
       ["t.leisure == 'stadium' && t.building","delete t.building"],
       ["t.man_made && t.building == 'yes'","delete t.building"],
