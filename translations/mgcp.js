@@ -696,6 +696,12 @@ mgcp = {
       tags.industrial = 'mine';
     }
 
+    if (attrs.F_CODE == 'AD050')
+    {
+      tags.landuse = 'industrial';
+      tags.industrial = 'heating';
+    }
+
 
   }, // End of applyToOsmPreProcessing
 
@@ -938,6 +944,12 @@ mgcp = {
       delete tags.landuse;
     }
 
+    if (attrs.F_CODE == 'AJ030')
+    {
+      tags.landuse = 'farmyard';
+      tags.farmyard = 'stockyard';
+    }
+
     if (attrs.F_CODE == 'AM030')
     {
       tags.building = 'silo';
@@ -971,6 +983,7 @@ mgcp = {
       ["t.embankment == 'yes' && !(t.highway || t.railway)","delete t.embankment; t.man_made = 'embankment'"],
       ["t['generator:source']","t.power = 'generator'"],
       ["(t.landuse == 'built_up_area' || t.place == 'settlement') && t.building","t['settlement:type'] = t.building; delete t.building"],
+      ["t.landuse == 'industrial' && t.industrial == 'heating' && t.amenity","delete t.amenity"],
       ["t.leisure == 'stadium'","t.building = 'yes'"],
       ["t['monitoring:weather'] == 'yes'","t.man_made = 'monitoring_station'"],
       ["t.military == 'revetment'","t.barrier = 'berm'; delete t.military"],
@@ -1324,6 +1337,10 @@ mgcp = {
       
       break;
 
+    case 'BD130': // Hazardous Rock Point
+      tags['seamark:type'] = 'rock';
+      break;
+
     case 'BD180': // Wreck
       if (!tags['seamark:type']) tags['seamark:type'] = 'wreck';
       break;
@@ -1635,8 +1652,10 @@ mgcp = {
       // ["t.construction && t.railway","t.railway = t.construction; t.condition = 'construction'; delete t.construction"],
       // ["t.construction && t.highway","t.highway = t.construction; t.condition = 'construction'; delete t.construction"],
       ["t.content && !(t.product)","t.product = t.content; delete t.content"],
+      ["t.landuse == 'farmyard' && t.farmyard == 'stockyard'","a.F_CODE = 'AJ030'"],
       ["t.landuse == 'aquaculture' && t.aquaculture == 'fish'","a.F_CODE = 'BH051'"],
       ["t.landuse == 'industrial' && t.industrial == 'mine'","a.F_CODE = 'AA010'"],
+      ["t.landuse == 'industrial' && t.industrial == 'heating'","a.F_CODE = 'AD050'"],
       ["t.leisure == 'stadium' && t.building","delete t.building"],
       ["t.man_made && t.building == 'yes'","delete t.building"],
       ["t.man_made == 'cut_edge'","t.cutting = 'yes'; a.F_CODE = 'DB070'"],
@@ -1761,9 +1780,16 @@ mgcp = {
         break;
 
       case 'farmyard': // NOTE: This is different to farm && farmland
-        attrs.F_CODE = 'AL010'
-        attrs.FFN = '2'
-        break;
+        if (tags.farmyard == 'stockyard')
+        {
+          attrs.F_CODE = 'AJ030';
+          break;
+        } else {
+          attrs.F_CODE = 'AL010';
+          attrs.FFN = '2';
+          break;
+        }
+        
 
       case 'grass':
       case 'meadow':
@@ -2642,6 +2668,10 @@ mgcp = {
 
         if (tags['seamark:type'] == 'shoreline_construction') attrs.PWC = '2';
         
+        break;
+
+      case 'BD130': // Hazardous Rock Point
+        if (!attrs.WLE) attrs.WLE = '0'; // Unknown (for now)
         break;
 
       case 'BD180': // BA040 - Tidal Water
