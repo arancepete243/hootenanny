@@ -968,6 +968,13 @@ mgcp = {
       tags.natural = 'water';
     }
 
+    if (attrs.F_CODE == 'AC000')
+    {
+      delete tags.facility;
+      tags.landuse = 'industrial';
+      tags.industrial = 'factory';
+    }
+
     if (mgcp.osmPostRules == undefined)
     {
       // "New" style complex rules
@@ -988,6 +995,8 @@ mgcp = {
       ["t['monitoring:weather'] == 'yes'","t.man_made = 'monitoring_station'"],
       ["t.military == 'revetment'","t.barrier = 'berm'; delete t.military"],
       ["t.natural =='spring' && t['spring:type'] == 'spring'","delete t['spring:type']"],
+      ["t['pipeline:type'] == 'penstock' && t.location","delete t['pipeline:type']; t.man_made = 'pipeline'; t.usage = 'penstock'; t.substance = 'water'"],
+      ["t.power == 'substation' && t.name","t.operator = t.name; delete t.name"],
       // ["t.public_transport == 'station'","t.bus = 'yes'"],
       ["t['social_facility:for'] == 'senior'","t.amenity = 'social_facility'; t.social_facility = 'group_home'"],
       ["t['subject_to_inundation'] == 'yes'","delete t['subject_to_inundation']; t.flood_prone = 'yes'"],
@@ -1721,15 +1730,18 @@ mgcp = {
       ["t.landuse == 'farmyard' && t.farmyard == 'stockyard'","a.F_CODE = 'AJ030'"],
       ["t.landuse == 'aquaculture' && t.aquaculture == 'fish'","a.F_CODE = 'BH051'"],
       ["t.landuse == 'industrial' && t.industrial == 'mine'","a.F_CODE = 'AA010'"],
+      ["t.landuse == 'industrial' && t.industrial == 'factory'","a.F_CODE = 'AC000'"],
       ["t.landuse == 'industrial' && t.industrial == 'heating'","a.F_CODE = 'AD050'"],
       ["t.leisure == 'stadium' && t.building","delete t.building"],
       ["t.man_made && t.building == 'yes'","delete t.building"],
       ["t.man_made == 'cut_edge'","t.cutting = 'yes'; a.F_CODE = 'DB070'"],
       ["t.man_made == 'water_tower'","a.F_CODE = 'AL241'"],
+      ["t.man_made == 'pipeline' && t.usage == 'penstock' && t.substance == 'water' && t.location","a.F_CODE ='BH110'"],
       ["t.military == 'bunker' && t.building == 'bunker'","delete t.building"],
       ["t.military == 'revetment'","t.barrier = 'berm'; delete t.military"],
       ["t.natural == 'sinkhole'","a.F_CODE = 'BH145'; t['water:sink:type'] = 'disappearing'; delete t.natural"],
       ["t.natural == 'spring' && !(t['spring:type'])","t['spring:type'] = 'spring'"],
+      ["t.operator","t.name = t.operator"],
       // ["t.power == 'generator'","a.F_CODE = 'AL015'; t.use = 'power_generation'"],
       //["t.power == 'line'","t['cable:type'] = 'power'; t.cable = 'yes'"],
       ["t.power == 'minor_line'","t.spower = 'minor_line'"],
@@ -2459,6 +2471,29 @@ mgcp = {
       }
     }
 
+    if (!tags.arrangement && tags.man_made == 'pipeline')
+    {
+        switch (tags.count)
+        {
+          case undefined:
+            tags.arrangement = 'unknown';
+            break;
+          
+          case '1':
+            tags.arrangement = 'single';
+            break;
+          
+          case '2':
+            tags.arrangement = 'double';
+            break;
+
+          case '3':
+            tags.arrangement = 'multiple';
+            break;
+        }
+        delete tags.count;
+    }
+
     // We don't have BH220 in MGCP
     switch (tags.man_made)
     {
@@ -2506,6 +2541,10 @@ mgcp = {
         attrs.F_CODE = 'AL010';
         attrs.FFN = '99';
         break;
+    }
+    if (tags.man_made == 'works')
+    {
+      attrs.F_CODE = 'AC000';
     }
 
     // Fix up water features from OSM
