@@ -57,9 +57,11 @@ mgcp.rules = {
     ['F_CODE','AK130','highway','race_way'],
     ['F_CODE','AK190','man_made','recreational_pier'], // Recreational Pier - NFDD BB081
     ['F_CODE','AL015','building','yes'], // Building - changed to AL013
-    ['F_CODE','AL210','route:protection','yes'], // Protection Shed - NFDD AL211
+    ['F_CODE','AL170','place','square'], // Public Square
+    ['F_CODE','AL210','tunnel','avalanche_protector'], // Protection Shed - NFDD AL211
     ['F_CODE','AM040','man_made','heap'],
     ['F_CODE','AT030','power','line'], // Power Line - NFDD AT005
+    ['F_CODE','AT042','power','tower'], // Pylon
     ['F_CODE','AT050','use','communication'], // Communication Station - No replacement code
     ['F_CODE','AT060','communication','line'], // Communication Line - NFDD AT005
     ['F_CODE','BB041','man_made','breakwater'], // Breakwater - NFDD BB081

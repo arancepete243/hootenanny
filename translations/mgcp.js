@@ -1159,6 +1159,36 @@ mgcp = {
         tags.building = 'bunker';
       }
       break;
+
+    case 'AK130': // Racetrack
+      switch (attrs.RAY)
+      {
+        case '0':
+          tags.sport = 'unknown';
+          break;
+        case '1':
+          tags.sport = 'cycling';
+          break;
+        case '3':
+          tags.sport = 'dog_racing';
+          break;
+        case '5':
+          tags.sport = 'horse_racing';
+          break;
+        case '6':
+          tags.sport = 'ice_skating';
+          break;
+        case '8':
+          tags.sport = 'roller_skating';
+          break;
+        case '9':
+          tags.sport = 'athletics';
+          break;
+        case '999':
+          tags.sport = 'other';
+          break;
+      }
+      break;
     
     case 'AQ110': // Mooring airship
       tags.man_made = 'tower';
@@ -1771,7 +1801,7 @@ mgcp = {
       //["t.power == 'line'","t['cable:type'] = 'power'; t.cable = 'yes'"],
       ["t.power == 'minor_line'","t.spower = 'minor_line'"],
       ["t.rapids == 'yes'","t.waterway = 'rapids'"],
-      ["t.resource && t.man_made != 'heap'","t.product = t.resource; delete t.resource"],
+      ["t.resource && t.man_made && t.man_made != 'heap'","t.product = t.resource; delete t.resource"],
       ["t.route == 'road' && !(t.highway)","t.highway = 'road'; delete t.route"],
       // ["(t.shop || t.office) && !(t.building)","a.F_CODE = 'AL015'"],
       ["t.tourism == 'information' && t.information","delete t.tourism"],
@@ -1819,6 +1849,38 @@ mgcp = {
       delete tags.power;
       tags.pylon = 'yes';
       if (!tags['cable:type']) tags['cable:type'] = 'power';
+    }
+
+    if (tags.leisure == 'track')
+    {
+      switch (tags.sport)
+      {
+        case undefined:
+        case 'unknown':
+          attrs.RAY = '0';
+          break;
+        case 'cycling':
+          attrs.RAY = '1';
+          break;
+        case 'dog_racing':
+          attrs.RAY = '3';
+          break;
+        case 'horse_racing':
+          attrs.RAY = '5';
+          break;
+        case 'ice_skating':
+          attrs.RAY = '6';
+          break;
+        case 'roller_skating':
+          attrs.RAY = '8';
+          break;
+        case 'athletics':
+          attrs.RAY = '9';
+          break;
+        default:
+          attrs.RAY = '999';
+          break;
+      }
     }
 
     // Sort out landuse
@@ -1955,6 +2017,47 @@ mgcp = {
         {
           attrs.F_CODE = 'EA055'; // Hop Field
           attrs.CSP = '18'; // Hops
+        }
+        break;
+
+      case 'quarry':
+        if (!tags.name) tags.name = 'UNK';
+        switch (tags.resource) {
+          case undefined:
+            attrs.PPO = '0';
+            break;
+          case 'clay':
+            attrs.PPO = '17';
+            break;
+          case 'dolomite':
+            attrs.PPO = '35';
+            break;
+          case 'granite':
+            attrs.PPO = '50';
+            break;
+          case 'gravel':
+            attrs.PPO = '53';
+            break;
+          case 'marble':
+            attrs.PPO = '66';
+            break;
+          case 'sand':
+            attrs.PPO = '96';
+            break;
+          case 'slate':
+          case 'dimension_stone':
+          case 'stone':
+          case 'limestone':
+            attrs.PPO = '110';
+            break;
+          default:
+            if (tags.resource && tags.resource.includes(';')) { // multiple ore types
+              attrs.PPO = '996'
+            }
+            else {
+              attrs.PPO = '999';
+            }
+            break;   
         }
         break;
 
